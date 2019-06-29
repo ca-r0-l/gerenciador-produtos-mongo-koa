@@ -1,0 +1,16 @@
+{
+   "compileOnSave": false,
+   "compilerOptions": {
+      "target": "es6",
+      "outDir": "dist",
+      "noEmitOnError": true,
+      "noImplicitAny": false,
+      "removeComments": true,
+      "strictNullChecks": true,
+      "experimentalDecorators": true,
+      "module": "commonjs",
+      "types": ["node"]
+   },
+   "include": ["app/**/*"],
+   "exclude": ["node_modules", "tests", "dist"]
+}

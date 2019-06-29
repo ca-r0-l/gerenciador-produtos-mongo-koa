@@ -1,0 +1,43 @@
+{
+   "name": "gerenciador-produtos-mongo-koa",
+   "version": "1.0.0",
+   "description": ":bulb: CRUD utilizando MongoDB e KoaJS",
+   "main": "dist/app.js",
+   "directories": {
+      "test": "tests"
+   },
+   "scripts": {
+      "start": "tsc && node dist/bootstrap.js",
+      "test": "echo \"Error: no test specified\" && exit 1"
+   },
+   "repository": {
+      "type": "git",
+      "url": "git+https://github.com/ca-r0-l/gerenciador-produtos-mongo-koa.git"
+   },
+   "author": "",
+   "license": "ISC",
+   "bugs": {
+      "url": "https://github.com/ca-r0-l/gerenciador-produtos-mongo-koa/issues"
+   },
+   "homepage": "https://github.com/ca-r0-l/gerenciador-produtos-mongo-koa#readme",
+   "dependencies": {
+      "cluster": "^0.7.7",
+      "koa": "^2.7.0",
+      "koa-bodyparser": "^4.2.1",
+      "koa-json": "^2.0.2",
+      "koa-router": "^7.4.0",
+      "mongoose": "^5.6.1",
+      "os": "^0.1.1",
+      "typescript": "^3.5.2"
+   },
+   "devDependencies": {
+      "@types/jasmine": "^3.3.13",
+      "@types/koa": "^2.0.48",
+      "@types/koa-router": "^7.0.40",
+      "@types/mongoose": "^5.5.6",
+      "@types/node": "^12.0.5",
+      "jasmine": "^3.4.0",
+      "ts-node": "^8.3.0",
+      "typescript": "^3.5.2"
+   }
+}
