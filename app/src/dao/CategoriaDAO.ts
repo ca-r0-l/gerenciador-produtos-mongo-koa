@@ -1,43 +1,31 @@
 import Categoria from "../entity/Categoria";
 import databaseConstants from "../constants/database.constants";
+import ICategoria from "../interfaces/ICategoria";
 
 export default class CategoriaDAO {
    constructor() {}
 
-   public pesquisaPaginada(page: number) {
+   public async pesquisaPaginada(page: number): Promise<any> {
       const query = {};
       const skip = databaseConstants.LIMIT * (page - 1);
 
-      Categoria.find(query)
+      const data = await Categoria.find(query)
          .skip(skip)
          .limit(databaseConstants.LIMIT)
-         .exec((err, doc) => {
-            if (err) throw err;
+         .exec();
+      const count = await Categoria.countDocuments(query).exec();
 
-            console.log(doc);
-
-            return doc;
-            //    Categoria.countDocuments(query).exec((countErr, count) => {
-            //       if (countErr) throw err;
-
-            //       return {
-            //          total: count,
-            //          page: page,
-            //          pageSize: doc.length,
-            //          data: doc
-            //       };
-            //    });
-         });
+      return {
+         total: count,
+         page: page,
+         pageSize: data.length,
+         data: data
+      };
    }
 
-   public salvar(categoria): void {
+   public async salvar(categoria): Promise<any> {
       const _categoria = new Categoria({ nome: categoria.nome });
-      _categoria.save((err, docs) => {
-         if (err) throw err;
-
-         console.log("docs =>", docs);
-
-         return docs;
-      });
+      const data = await _categoria.save();
+      return data;
    }
 }
