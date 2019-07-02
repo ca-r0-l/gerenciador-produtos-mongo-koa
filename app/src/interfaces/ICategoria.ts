@@ -1,4 +1,4 @@
 export default interface ICategoria {
-   id?: string;
+   id?: number;
    nome: string;
 }
