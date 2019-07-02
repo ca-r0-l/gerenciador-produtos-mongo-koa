@@ -1,22 +1,19 @@
 import "jasmine";
-import PedidoBO from "../app/src/bo/PedidoBO";
-import IPedido from "../app/src/interfaces/IPedido";
 import ClienteBO from "../app/src/bo/ClienteBO";
+import PedidoBO from "../app/src/bo/PedidoBO";
+import Pedido from "../app/src/entity/Pedido";
+import Cliente from "../app/src/entity/Cliente";
+import Endereco from "../app/src/entity/Endereco";
+import Produto from "../app/src/entity/Produto";
+import Categoria from "../app/src/entity/Categoria";
 
 describe("PedidoBO =>", () => {
    const pedidoBO = new PedidoBO();
-   let pedido: IPedido;
+   let pedido: Pedido;
    beforeEach(() => {
-      pedido = {
-         cliente: {
-            nome: "carol",
-            endereco: { rua: "urca", numero: 111, bairro: "independencia", cidade: "sbc", estado: "SP" },
-            celular: "123456789",
-            id: 1
-         },
-         valorCompra: 100.9,
-         produtos: [{ nome: "coxinha", valor: 10.9, categoria: { nome: "salgado" }, id: 1 }]
-      };
+      pedido = new Pedido(new Cliente("carol", new Endereco("urca", 111, "independencia", "sbc", "SP"), "123456789", 1), 100.9, [
+         new Produto("coxinha", 10.9, new Categoria("salgado"), 1)
+      ]);
    });
 
    it("pedido válido, não retornará erro", () => {

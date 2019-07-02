@@ -1,9 +1,10 @@
-import ICategoria from "../interfaces/ICategoria";
+import Categoria from "../entity/Categoria";
 
 export default class CategoriaBO {
    public static readonly ID_INVALIDO: string = "Id inválido";
    public static readonly NOME_INVALIDO: string = "Nome inválido";
    public static readonly CATEGORIA_INVALIDA: string = "Categoria inválida";
+   public static readonly PAGINA_INVALIDA: string = "Página inválida";
 
    validId(id: any): void {
       if (!id || (id && id <= 0)) {
@@ -12,7 +13,9 @@ export default class CategoriaBO {
    }
 
    validPage(id: any): void {
-      this.validId(id);
+      if (!id || (id && id <= 0)) {
+         throw new Error(CategoriaBO.PAGINA_INVALIDA);
+      }
    }
 
    validNome(nome: string): void {
@@ -21,7 +24,7 @@ export default class CategoriaBO {
       }
    }
 
-   validCategoria(categoria: ICategoria): void {
+   validCategoria(categoria: Categoria): void {
       if (!categoria) throw new Error(CategoriaBO.CATEGORIA_INVALIDA);
       this.validNome(categoria.nome);
    }

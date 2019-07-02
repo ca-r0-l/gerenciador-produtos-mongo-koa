@@ -1,12 +1,12 @@
 import "jasmine";
 import EnderecoBO from "../app/src/bo/EnderecoBO";
-import IEndereco from "../app/src/interfaces/IEndereco";
+import Endereco from "../app/src/entity/Endereco";
 
 describe("EnderecoBO =>", () => {
    const enderecoBO = new EnderecoBO();
-   let endereco: IEndereco;
+   let endereco: Endereco;
    beforeEach(() => {
-      endereco = { rua: "urca", numero: 111, bairro: "independencia", cidade: "sbc", estado: "SP", id: 1 };
+      endereco = new Endereco("urca", 111, "independencia", "sbc", "SP");
    });
 
    it("endereço válido, não retornará erro", () => {

@@ -1,5 +1,9 @@
-import * as mongoose from "mongoose";
-const Schema = mongoose.Schema;
+export default class Categoria {
+   public id: number;
+   public nome: string;
 
-const Categoria = new Schema({ nome: String }, { collection: "categorias" });
-export default mongoose.model("Categorias", Categoria);
+   constructor(nome: string, id?: number) {
+      this.nome = nome;
+      if (id) this.id = id;
+   }
+}

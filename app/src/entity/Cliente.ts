@@ -1,18 +1,14 @@
-import * as mongoose from "mongoose";
-const Schema = mongoose.Schema;
+import Endereco from "./Endereco";
+export default class Cliente {
+   public id: number;
+   public nome: string;
+   public endereco: Endereco;
+   public celular: string;
 
-const cliente = new Schema({
-   id: Number,
-   nome: String,
-   celular: String,
-   endereco: {
-      id: Number,
-      rua: String,
-      numero: Number,
-      bairro: String,
-      cidade: String,
-      estado: String
+   constructor(nome: string, endereco: Endereco, celular: string, id?: number) {
+      this.nome = nome;
+      this.endereco = endereco;
+      this.celular = celular;
+      if (id) this.id = id;
    }
-});
-
-const Cliente = mongoose.model("Cliente", cliente);
+}

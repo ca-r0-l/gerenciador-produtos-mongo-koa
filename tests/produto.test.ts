@@ -1,13 +1,14 @@
 import "jasmine";
 import ProdutoBO from "../app/src/bo/ProdutoBO";
-import IProduto from "../app/src/interfaces/IProduto";
 import CategoriaBO from "../app/src/bo/CategoriaBO";
+import Produto from "../app/src/entity/Produto";
+import Categoria from "../app/src/entity/Categoria";
 
 describe("ProdutoBO =>", () => {
    const produtoBO = new ProdutoBO();
-   let produto: IProduto;
+   let produto: Produto;
    beforeEach(() => {
-      produto = { nome: "coxinha", valor: 10.2, categoria: { nome: "salgado", id: 1 }, id: 1 };
+      produto = new Produto("coxinha", 10.2, new Categoria("salgado", 1), 1);
    });
 
    it("produto válido, não retornará erro", () => {
@@ -24,7 +25,7 @@ describe("ProdutoBO =>", () => {
    });
 
    it("preço inválido, erro: PRECO_UNITARIO_INVALIDO", () => {
-      produto.valor = -1;
+      produto.preco_unitario = -1;
       expect(() => {
          produtoBO.validProduto(produto);
       }).toThrowError(ProdutoBO.PRECO_UNITARIO_INVALIDO);

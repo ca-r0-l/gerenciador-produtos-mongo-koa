@@ -1,23 +1,16 @@
-import * as mongoose from "mongoose";
-const Schema = mongoose.Schema;
+import Cliente from "./Cliente";
+import Produto from "./Produto";
 
-const pedido = new Schema({
-   id: Number,
-   valor: Number,
-   cliente: {
-      id: Number,
-      nome: String,
-      celular: String,
-      endereco: {
-         id: Number,
-         rua: String,
-         numero: Number,
-         bairro: String,
-         cidade: String,
-         estado: String
-      }
-   },
-   produtos: [{ nome: String, preco_unitario: Number, categoria: { id: Number, nome: String } }]
-});
+export default class Pedido {
+   public id?: number;
+   public cliente: Cliente;
+   public valorCompra: number;
+   public produtos: Array<Produto>;
 
-const Pedido = mongoose.model("Pedido", pedido);
+   constructor(cliente: Cliente, valorCompra: number, produtos: Array<Produto>, id?: number) {
+      if (id) this.id = id;
+      this.cliente = cliente;
+      this.valorCompra = valorCompra;
+      this.produtos = produtos;
+   }
+}

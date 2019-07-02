@@ -1,5 +1,5 @@
 import EnderecoBO from "./EnderecoBO";
-import IEndereco from "../interfaces/IEndereco";
+import Endereco from "../entity/Endereco";
 
 export default class ClienteBO {
    public static readonly ID_INVALIDO: string = "Id inválido";
@@ -27,7 +27,7 @@ export default class ClienteBO {
       }
    }
 
-   validEndereco(endereco: number | IEndereco): void {
+   validEndereco(endereco: number | Endereco): void {
       if (endereco) {
          if (typeof endereco === "number") {
             if (endereco <= 0) {

@@ -1,7 +1,7 @@
 import ClienteBO from "./ClienteBO";
-import ICliente from "../interfaces/ICliente";
-import IProduto from "../interfaces/IProduto";
-import IPedido from "../interfaces/IPedido";
+import Cliente from "../entity/Cliente";
+import Produto from "../entity/Produto";
+import Pedido from "../entity/Pedido";
 
 export default class PedidoBO {
    public static readonly ID_INVALIDO: string = "Id inválido";
@@ -16,7 +16,7 @@ export default class PedidoBO {
       }
    }
 
-   validCliente(cliente: number | ICliente): void {
+   validCliente(cliente: number | Cliente): void {
       if (cliente) {
          if (cliente && cliente <= 0) {
             throw new Error(ClienteBO.CLIENTE_INVALIDO);
@@ -34,13 +34,13 @@ export default class PedidoBO {
       }
    }
 
-   validProdutos(produtos: Array<IProduto>): void {
+   validProdutos(produtos: Array<Produto>): void {
       if (!produtos || (produtos && produtos.length === 0)) {
          throw new Error(PedidoBO.PRODUTOS_INVALIDOS);
       }
    }
 
-   validPedido(pedido: IPedido): void {
+   validPedido(pedido: Pedido): void {
       this.validCliente(pedido.cliente);
       this.validValor(pedido.valorCompra);
       this.validProdutos(pedido.produtos);

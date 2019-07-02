@@ -1,8 +1,9 @@
 import * as Koa from "koa";
 import * as Router from "koa-router";
 import CategoriaService from "../service/CategoriaService";
-import IPaginatedSearch from "../interfaces/IPaginatedSearch";
-import ICategoria from "../interfaces/ICategoria";
+import Categoria from "../entity/Categoria";
+import Response from "../entity/Response";
+import ResponsePaginated from "../entity/ResponsePaginated";
 
 const categoriaService = new CategoriaService();
 
@@ -14,13 +15,34 @@ const categoriaController: Router = new Router(routerOpts);
 categoriaController
    .get("/", async (ctx: Koa.Context) => {
       const pageNumber: number = Number(ctx.request.query.pageNumber);
-      const result: IPaginatedSearch<ICategoria> = await categoriaService.pesquisaPaginada(pageNumber);
-      ctx.body = result;
+      const result: ResponsePaginated<Categoria> = await categoriaService.pesquisaPaginada(pageNumber);
+      ctx.body = result.body;
+      ctx.status = result.code;
+   })
+   .get("/:id", async (ctx: Koa.Context) => {
+      const id = ctx.params.id;
+      const result: Response<Categoria> = await categoriaService.detalhar(id);
+      ctx.body = result.data;
+      ctx.status = result.code;
    })
    .post("/", async (ctx: any) => {
-      const categoria: number = ctx.request.body;
-      const result: ICategoria = await categoriaService.salvar(categoria);
-      ctx.body = result;
+      const categoria = ctx.request.body;
+      const result = await categoriaService.salvar(categoria);
+      ctx.body = result.data;
+      ctx.status = result.code;
+   })
+   .put("/:id/nome", async (ctx: any) => {
+      const id = ctx.params.id;
+      const nome: string = ctx.request.body.nome;
+      const result = await categoriaService.atualizarNome(id, nome);
+      ctx.body = result.data;
+      ctx.status = result.code;
+   })
+   .delete("/:id", async (ctx: Koa.Context) => {
+      const id = ctx.params.id;
+      const result: Response<Categoria> = await categoriaService.apagar(id);
+      ctx.body = result.data;
+      ctx.status = result.code;
    });
 
 export default categoriaController;

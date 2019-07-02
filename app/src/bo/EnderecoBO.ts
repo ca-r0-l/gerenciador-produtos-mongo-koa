@@ -1,4 +1,4 @@
-import IEndereco from "../interfaces/IEndereco";
+import Endereco from "../entity/Endereco";
 
 export default class EnderecoBO {
    public static readonly ID_INVALIDO: string = "Id inválido";
@@ -45,7 +45,7 @@ export default class EnderecoBO {
       }
    }
 
-   validEndereco(endereco: IEndereco): void {
+   validEndereco(endereco: Endereco): void {
       if (!endereco) throw new Error(EnderecoBO.ENDERECO_INVALIDO);
       this.validRua(endereco.rua);
       this.validNumero(endereco.numero);

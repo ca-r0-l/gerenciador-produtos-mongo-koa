@@ -1,18 +1,14 @@
 import "jasmine";
 import ClienteBO from "../app/src/bo/ClienteBO";
-import ICliente from "../app/src/interfaces/ICliente";
 import EnderecoBO from "../app/src/bo/EnderecoBO";
+import Cliente from "../app/src/entity/Cliente";
+import Endereco from "../app/src/entity/Endereco";
 
 describe("ClienteBO =>", () => {
    const clienteBO = new ClienteBO();
-   let cliente: ICliente;
+   let cliente: Cliente;
    beforeEach(() => {
-      cliente = {
-         nome: "carol",
-         endereco: { rua: "urca", numero: 111, bairro: "independencia", cidade: "sbc", estado: "SP", id: 1 },
-         celular: "123456789",
-         id: 1
-      };
+      cliente = new Cliente("carol", new Endereco("urca", 111, "independencia", "sbc", "SP", 1), "123456789", 1);
    });
 
    it("cliente válido, não retornará erro", () => {
