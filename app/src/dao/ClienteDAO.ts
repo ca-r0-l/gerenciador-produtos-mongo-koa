@@ -1,72 +1,68 @@
+import databaseConstants from "../constants/database.constants";
+import Cliente from "../entity/Cliente";
+import ClienteSchema from "../schema/ClienteSchema";
+import Endereco from "../entity/Endereco";
+import EnderecoService from "../service/EnderecoService";
+
 export default class ClienteDAO {
-   // private PER_PAGE: number = 5;
-   // private readonly SELECT: string = `SELECT c.id idCliente, c.nome,
-   // c.endereco, c.celular,
-   // e.id idEndereco, e.rua, e.numero,
-   // e.estado, e.cidade, e.bairro
-   // FROM clientes c`;
-   // private readonly JOIN: string = `LEFT JOIN enderecos e ON c.endereco = e.id`;
-   // private readonly ORDER: string = `ORDER BY c.id`;
-   // public async getAllPaginated(pageNumber): Promise<any> {
-   //    const pool = await connection;
-   //    const result = await pool.request().query(`
-   //             ${this.SELECT}
-   //             ${this.JOIN}
-   //             ${this.ORDER}
-   //             OFFSET ${this.PER_PAGE} * (${pageNumber} - 1) ROWS
-   //             FETCH NEXT ${this.PER_PAGE} ROWS ONLY;
-   //       `);
-   //    return result.recordset;
-   // }
-   // public async add(cliente: Cliente): Promise<any> {
-   //    const pool = await connection;
-   //    const result = await pool
-   //       .request()
-   //       .input("nome", cliente.nome)
-   //       .input("endereco", cliente.endereco)
-   //       .input("celular", cliente.celular)
-   //       .query("insert into clientes (nome, endereco, celular) values (@nome, @endereco, @celular);");
-   //    return result.recordset;
-   // }
-   // public async detail(id: number): Promise<any> {
-   //    const pool = await connection;
-   //    const result = await pool.request().input("id", id).query(`${this.SELECT}
-   //       ${this.JOIN} where c.id = @id;`);
-   //    return result.recordset;
-   // }
-   // public async delete(id: number): Promise<any> {
-   //    const pool = await connection;
-   //    const result = await pool
-   //       .request()
-   //       .input("id", id)
-   //       .query("delete from clientes where id = @id;");
-   //    return result.recordset;
-   // }
-   // public async updateNome(id: number, nome: string): Promise<any> {
-   //    const pool = await connection;
-   //    const result = await pool
-   //       .request()
-   //       .input("id", id)
-   //       .input("nome", nome)
-   //       .query("update clientes set nome = @nome where id = @id;");
-   //    return result.recordset;
-   // }
-   // public async updateEndereco(id: number, endereco: number): Promise<any> {
-   //    const pool = await connection;
-   //    const result = await pool
-   //       .request()
-   //       .input("id", id)
-   //       .input("endereco", endereco)
-   //       .query("update clientes set endereco = @endereco where id = @id;");
-   //    return result.recordset;
-   // }
-   // public async updateCelular(id: number, celular: string): Promise<any> {
-   //    const pool = await connection;
-   //    const result = await pool
-   //       .request()
-   //       .input("id", id)
-   //       .input("celular", celular)
-   //       .query("update clientes set celular = @celular where id = @id;");
-   //    return result.recordset;
-   // }
+   private _enderecoService: EnderecoService = new EnderecoService();
+
+   public async pesquisaPaginada(page: number): Promise<any> {
+      const query = {};
+      const skip = databaseConstants.LIMIT * (page - 1);
+
+      const data = await ClienteSchema.find(query)
+         .skip(skip)
+         .limit(databaseConstants.LIMIT)
+         .exec();
+      const count = await ClienteSchema.countDocuments(query).exec();
+
+      return {
+         total: count,
+         page: page,
+         pageSize: data.length,
+         data: data
+      };
+   }
+   public async salvar(cliente: Cliente): Promise<any> {
+      const _categoria = new ClienteSchema({
+         nome: cliente.nome,
+         celular: cliente.celular,
+         endereco: {
+            id: cliente.endereco.id,
+            rua: cliente.endereco.rua,
+            numero: cliente.endereco.numero,
+            bairro: cliente.endereco.bairro,
+            cidade: cliente.endereco.cidade,
+            estado: cliente.endereco.estado
+         }
+      });
+      const data = await _categoria.save();
+      return data;
+   }
+
+   public async detalhar(id: number): Promise<any> {
+      const data = await ClienteSchema.findById(id).exec();
+      return [data];
+   }
+   public async apagar(id: number): Promise<void> {
+      await ClienteSchema.findByIdAndDelete(id).exec();
+   }
+
+   public async atualizarNome(id: number, nome: string): Promise<void> {
+      await ClienteSchema.updateOne({ _id: id }, { nome: nome }).exec();
+   }
+
+   public async atualizarEndereco(id: number, endereco: Endereco): Promise<void> {
+      await this._enderecoService.atualizar(endereco);
+
+      await ClienteSchema.updateOne(
+         { _id: id },
+         { endereco: { rua: endereco.rua, numero: endereco.numero, bairro: endereco.bairro, cidade: endereco.cidade, estado: endereco.estado } }
+      ).exec();
+   }
+
+   public async atualizarCelular(id: number, celular: string): Promise<void> {
+      await ClienteSchema.updateOne({ _id: id }, { celular: celular }).exec();
+   }
 }

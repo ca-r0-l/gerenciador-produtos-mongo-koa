@@ -1,18 +1,16 @@
 import * as mongoose from "mongoose";
 const Schema = mongoose.Schema;
 
-const cliente = new Schema({
-   id: Number,
-   nome: String,
-   celular: String,
-   endereco: {
+const EnderecoSchema = new Schema(
+   {
       id: Number,
       rua: String,
       numero: Number,
       bairro: String,
       cidade: String,
       estado: String
-   }
-});
+   },
+   { collection: "enderecos" }
+);
 
-const Cliente = mongoose.model("Cliente", cliente);
+export default mongoose.model("Endereco", EnderecoSchema);

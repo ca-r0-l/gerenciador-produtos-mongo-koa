@@ -3,6 +3,8 @@ import * as bodyParser from "koa-bodyparser";
 import * as json from "koa-json";
 import serverConstants from "./constants/server.constants";
 import categoriaController from "./controller/CategoriaController";
+import enderecoController from "./controller/EnderecoController";
+import clienteController from "./controller/ClienteController";
 
 const server = async () => {
    const app = new Koa();
@@ -22,6 +24,12 @@ const server = async () => {
 
    app.use(categoriaController.routes());
    app.use(categoriaController.allowedMethods());
+
+   app.use(enderecoController.routes());
+   app.use(enderecoController.allowedMethods());
+
+   app.use(clienteController.routes());
+   app.use(clienteController.allowedMethods());
 
    app.listen(serverConstants.DEFAULT_PORT);
 };

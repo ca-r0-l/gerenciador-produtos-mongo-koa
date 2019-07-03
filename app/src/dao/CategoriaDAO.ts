@@ -1,5 +1,5 @@
-import CategoriaSchema from "../schema/Categoria";
 import databaseConstants from "../constants/database.constants";
+import CategoriaSchema from "../schema/CategoriaSchema";
 import Categoria from "../entity/Categoria";
 
 export default class CategoriaDAO {
@@ -31,8 +31,6 @@ export default class CategoriaDAO {
 
    public async detalhar(id: number): Promise<any> {
       const data = await CategoriaSchema.findById(id).exec();
-      console.log(data);
-
       return [data];
    }
 
