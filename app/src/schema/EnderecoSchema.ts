@@ -3,7 +3,6 @@ const Schema = mongoose.Schema;
 
 const EnderecoSchema = new Schema(
    {
-      id: Number,
       rua: String,
       numero: Number,
       bairro: String,
@@ -12,5 +11,5 @@ const EnderecoSchema = new Schema(
    },
    { collection: "enderecos" }
 );
-
+EnderecoSchema.index({ rua: 1, numero: 1, bairro: 1, cidade: 1, estado: 1 }, { unique: true });
 export default mongoose.model("Endereco", EnderecoSchema);

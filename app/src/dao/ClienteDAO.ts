@@ -2,10 +2,8 @@ import databaseConstants from "../constants/database.constants";
 import Cliente from "../entity/Cliente";
 import ClienteSchema from "../schema/ClienteSchema";
 import Endereco from "../entity/Endereco";
-import EnderecoService from "../service/EnderecoService";
 
 export default class ClienteDAO {
-   private _enderecoService: EnderecoService = new EnderecoService();
 
    public async pesquisaPaginada(page: number): Promise<any> {
       const query = {};
@@ -54,8 +52,6 @@ export default class ClienteDAO {
    }
 
    public async atualizarEndereco(id: number, endereco: Endereco): Promise<void> {
-      await this._enderecoService.atualizar(endereco);
-
       await ClienteSchema.updateOne(
          { _id: id },
          { endereco: { rua: endereco.rua, numero: endereco.numero, bairro: endereco.bairro, cidade: endereco.cidade, estado: endereco.estado } }
