@@ -1,5 +1,6 @@
 import EnderecoBO from "./EnderecoBO";
 import Endereco from "../entity/Endereco";
+import EnderecoDAO from "../dao/EnderecoDAO";
 
 export default class ClienteBO {
    public static readonly ID_INVALIDO: string = "Id inválido";
@@ -8,6 +9,7 @@ export default class ClienteBO {
    public static readonly CLIENTE_INVALIDO: string = "Cliente inválido";
 
    private _enderecoBO: EnderecoBO = new EnderecoBO();
+   private _enderecoDAO: EnderecoDAO = new EnderecoDAO();
 
    validId(id?: any): void {
       if (!id || (id && id <= 0)) {
@@ -39,6 +41,15 @@ export default class ClienteBO {
       } else {
          throw new Error(EnderecoBO.ENDERECO_INVALIDO);
       }
+   }
+
+   async validExisteNoBanco(id?: number): Promise<boolean> {
+      let endereco: boolean = false;
+      if (id) {
+         endereco = await this._enderecoDAO.detalhar(id);
+      }
+
+      return endereco ? true : false;
    }
 
    validCliente(cliente): void {

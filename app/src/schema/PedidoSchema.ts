@@ -19,5 +19,5 @@ const PedidoSchema = new Schema(
    },
    { collection: "pedidos" }
 );
-
+PedidoSchema.index({ nome: 1, celular: 1 }, { unique: true });
 export default mongoose.model("Pedido", PedidoSchema);

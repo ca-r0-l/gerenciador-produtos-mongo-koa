@@ -5,6 +5,7 @@ import ClienteBO from "../bo/ClienteBO";
 import Cliente from "../entity/Cliente";
 import Endereco from "../entity/Endereco";
 import EnderecoService from "./EnderecoService";
+import * as mongoose from "mongoose";
 
 export default class ClienteService {
    private _enderecoService: EnderecoService = new EnderecoService();
@@ -19,9 +20,19 @@ export default class ClienteService {
 
    public async salvar(cliente: Cliente): Promise<Response<Cliente>> {
       this._clienteBO.validCliente(cliente);
-      await this._enderecoService.salvar(cliente.endereco);
-      const res = await this._clienteDAO.salvar(cliente);
-      return new Response(200, this.createCliente(res));
+      const session = await mongoose.startSession();
+      await session.startTransaction();
+      try {
+         const existe = await this._clienteBO.validExisteNoBanco(cliente.endereco.id);
+
+         if (!existe) await this._enderecoService.salvar(cliente.endereco);
+         const res = await this._clienteDAO.salvar(cliente);
+         return new Response(200, this.createCliente(res));
+      } catch (err) {
+         await session.abortTransaction();
+         await session.endSession();
+         throw err;
+      }
    }
 
    public async detalhar(id: number): Promise<Response<Cliente>> {
@@ -61,16 +72,23 @@ export default class ClienteService {
    private createCliente(cliente): Array<Cliente> {
       const clientes = new Array<Cliente>();
       if (cliente && cliente.length) {
-         cliente.forEach(c =>
+         cliente.forEach(c => {
             clientes.push(
                new Cliente(
                   c["nome"],
-                  new Endereco(c["rua"], c["numero"], c["bairro"], c["cidade"], c["estado"], c["idEndereco"]),
+                  new Endereco(
+                     c["endereco"]["rua"],
+                     c["endereco"]["numero"],
+                     c["endereco"]["bairro"],
+                     c["endereco"]["cidade"],
+                     c["endereco"]["estado"],
+                     c["endereco"]["_id"]
+                  ),
                   c["celular"],
-                  c["idCliente"]
+                  c["_id"]
                )
-            )
-         );
+            );
+         });
       }
       return clientes;
    }
