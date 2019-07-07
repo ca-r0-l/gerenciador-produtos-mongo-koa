@@ -5,6 +5,7 @@ import Categoria from "../app/src/entity/Categoria";
 describe("Categoria |", () => {
    const categoriaBO = new CategoriaBO();
    let categoria: Categoria;
+
    beforeEach(() => {
       categoria = new Categoria("salgados fritos", 1);
    });

@@ -8,10 +8,8 @@ export default class EnderecoService {
    private _enderecoDAO: EnderecoDAO = new EnderecoDAO();
    private _enderecoBO: EnderecoBO = new EnderecoBO();
 
-   constructor() {}
-
    public async pesquisaPaginada(pageNumber): Promise<ResponsePaginated<Endereco>> {
-      this._enderecoBO.validId(pageNumber);
+      this._enderecoBO.validPage(pageNumber);
       const res = await this._enderecoDAO.pesquisaPaginada(pageNumber);
       return new ResponsePaginated(200, res.total, res.page, this.createEndereco(res.data));
    }

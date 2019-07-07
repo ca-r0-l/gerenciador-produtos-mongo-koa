@@ -7,6 +7,7 @@ import Endereco from "../app/src/entity/Endereco";
 describe("ClienteBO =>", () => {
    const clienteBO = new ClienteBO();
    let cliente: Cliente;
+
    beforeEach(() => {
       cliente = new Cliente("carol", new Endereco("urca", 111, "independencia", "sbc", "SP", 1), "123456789", 1);
    });

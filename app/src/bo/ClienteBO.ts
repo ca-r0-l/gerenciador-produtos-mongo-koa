@@ -1,27 +1,14 @@
+import BOSupport from "./BOSupport";
+import EnderecoDAO from "../dao/EnderecoDAO";
 import EnderecoBO from "./EnderecoBO";
 import Endereco from "../entity/Endereco";
-import EnderecoDAO from "../dao/EnderecoDAO";
 
-export default class ClienteBO {
-   public static readonly ID_INVALIDO: string = "Id inválido";
-   public static readonly NOME_INVALIDO: string = "Nome inválido";
+export default class ClienteBO extends BOSupport {
    public static readonly CELULAR_INVALIDO: string = "Celular inválido";
    public static readonly CLIENTE_INVALIDO: string = "Cliente inválido";
 
    private _enderecoBO: EnderecoBO = new EnderecoBO();
    private _enderecoDAO: EnderecoDAO = new EnderecoDAO();
-
-   validId(id?: any): void {
-      if (!id || (id && id <= 0)) {
-         throw new Error(ClienteBO.ID_INVALIDO);
-      }
-   }
-
-   validNome(nome?: any): void {
-      if (!nome || (nome && nome.trim().length === 0)) {
-         throw new Error(ClienteBO.NOME_INVALIDO);
-      }
-   }
 
    validCelular(celular?: string): void {
       if (!celular || (celular && celular.trim().length !== 9) || (celular && !Number.parseInt(celular))) {

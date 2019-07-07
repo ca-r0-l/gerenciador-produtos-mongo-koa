@@ -1,3 +1,4 @@
+import * as mongoose from "mongoose";
 import ResponsePaginated from "../entity/ResponsePaginated";
 import Response from "../entity/Response";
 import ClienteDAO from "../dao/ClienteDAO";
@@ -5,7 +6,6 @@ import ClienteBO from "../bo/ClienteBO";
 import Cliente from "../entity/Cliente";
 import Endereco from "../entity/Endereco";
 import EnderecoService from "./EnderecoService";
-import * as mongoose from "mongoose";
 
 export default class ClienteService {
    private _enderecoService: EnderecoService = new EnderecoService();
@@ -13,7 +13,7 @@ export default class ClienteService {
    private _clienteBO: ClienteBO = new ClienteBO();
 
    public async pesquisaPaginada(pageNumber): Promise<ResponsePaginated<Cliente>> {
-      this._clienteBO.validId(pageNumber);
+      this._clienteBO.validPage(pageNumber);
       const res = await this._clienteDAO.pesquisaPaginada(pageNumber);
       return new ResponsePaginated(200, res.total, res.page, this.createCliente(res.data));
    }

@@ -1,74 +1,56 @@
+import databaseConstants from "../constants/database.constants";
 import Produto from "../entity/Produto";
+import ProdutoSchema from "../schema/ProdutoSchema";
+import Categoria from "../entity/Categoria";
 
 export default class ClienteDAO {
-   // private PER_PAGE: number = 5;
-   // private readonly SELECT: string = `
-   // SELECT p.id idProduto, p.nome, p.preco_unitario preco, c.id idCategoria, c.nome nomeCategoria
-   //    FROM produtos p`;
-   // private readonly JOIN: string = `LEFT JOIN categorias c ON
-   // p.categoria = c.id`;
-   // private readonly ORDER: string = `ORDER BY p.id`;
-   // public async getAllPaginated(pageNumber): Promise<any> {
-   //    const pool = await connection;
-   //    const result = await pool.request().query(`
-   //             ${this.SELECT}
-   //             ${this.JOIN}
-   //             ${this.ORDER}
-   //             OFFSET ${this.PER_PAGE} * (${pageNumber} - 1) ROWS
-   //             FETCH NEXT ${this.PER_PAGE} ROWS ONLY;
-   //             `);
-   //    return result.recordset;
-   // }
-   // public async add(produto: Produto): Promise<any> {
-   //    const pool = await connection;
-   //    const result = await pool
-   //       .request()
-   //       .input("nome", produto.nome)
-   //       .input("preco_unitario", produto.preco_unitario)
-   //       .input("categoria", produto.categoria)
-   //       .query("insert into produtos (nome, preco_unitario, categoria) values (@nome, @preco_unitario, @categoria);");
-   //    return result.recordset;
-   // }
-   // public async detail(id: number): Promise<any> {
-   //    const pool = await connection;
-   //    const result = await pool.request().input("id", id).query(`${this.SELECT}
-   //       ${this.JOIN}
-   //       where p.id = @id;`);
-   //    return result.recordset;
-   // }
-   // public async delete(id: number): Promise<any> {
-   //    const pool = await connection;
-   //    const result = await pool
-   //       .request()
-   //       .input("id", id)
-   //       .query("delete from produtos where id = @id;");
-   //    return result.recordset;
-   // }
-   // public async updateNome(id: number, nome: string): Promise<any> {
-   //    const pool = await connection;
-   //    const result = await pool
-   //       .request()
-   //       .input("id", id)
-   //       .input("nome", nome)
-   //       .query("update produtos set nome = @nome where id = @id;");
-   //    return result.recordset;
-   // }
-   // public async updatePreco(id: number, preco: number): Promise<any> {
-   //    const pool = await connection;
-   //    const result = await pool
-   //       .request()
-   //       .input("id", id)
-   //       .input("preco_unitario", preco)
-   //       .query("update produtos set preco_unitario = @preco_unitario where id = @id;");
-   //    return result.recordset;
-   // }
-   // public async updateCategoria(id: number, categoria: number): Promise<any> {
-   //    const pool = await connection;
-   //    const result = await pool
-   //       .request()
-   //       .input("id", id)
-   //       .input("categoria", categoria)
-   //       .query("update produtos set categoria = @categoria where id = @id;");
-   //    return result.recordset;
-   // }
+   public async pesquisaPaginada(page: number): Promise<any> {
+      const query = {};
+      const skip = databaseConstants.LIMIT * (page - 1);
+
+      const data = await ProdutoSchema.find(query)
+         .skip(skip)
+         .limit(databaseConstants.LIMIT)
+         .exec();
+      const count = await ProdutoSchema.countDocuments(query).exec();
+
+      return {
+         total: count,
+         page: page,
+         pageSize: data.length,
+         data: data
+      };
+   }
+
+   public async salvar(produto: Produto): Promise<any> {
+      const _pedido: any = new ProdutoSchema({
+         nome: produto.nome,
+         preco_unitario: produto.preco_unitario,
+         categoria: { nome: produto.categoria.nome }
+      });
+
+      const data = await _pedido.save();
+      return data;
+   }
+
+   public async detalhe(id: number): Promise<any> {
+      const data = await ProdutoSchema.findById(id).exec();
+      return [data];
+   }
+
+   public async apagar(id: number): Promise<void> {
+      await ProdutoSchema.findByIdAndDelete(id).exec();
+   }
+
+   public async atualizarNome(id: number, nome: string): Promise<any> {
+      await ProdutoSchema.updateOne({ _id: id }, { nome }).exec();
+   }
+
+   public async atualizarPreco(id: number, preco: number): Promise<any> {
+      await ProdutoSchema.updateOne({ _id: id }, { preco }).exec();
+   }
+
+   public async atualizarCategoria(id: number, categoria: Categoria): Promise<any> {
+      await ProdutoSchema.updateOne({ _id: id }, { categoria: { nome: categoria.nome } }).exec();
+   }
 }

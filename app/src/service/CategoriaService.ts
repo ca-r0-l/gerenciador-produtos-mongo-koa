@@ -1,14 +1,12 @@
+import Response from "../entity/Response";
+import ResponsePaginated from "../entity/ResponsePaginated";
 import CategoriaDAO from "../dao/CategoriaDAO";
 import CategoriaBO from "../bo/CategoriaBO";
 import Categoria from "../entity/Categoria";
-import Response from "../entity/Response";
-import ResponsePaginated from "../entity/ResponsePaginated";
 
 export default class CategoriaService {
    private _categoriaDAO: CategoriaDAO = new CategoriaDAO();
    private _categoriaBO: CategoriaBO = new CategoriaBO();
-
-   constructor() {}
 
    public async pesquisaPaginada(page: number): Promise<ResponsePaginated<Categoria>> {
       this._categoriaBO.validPage(page);

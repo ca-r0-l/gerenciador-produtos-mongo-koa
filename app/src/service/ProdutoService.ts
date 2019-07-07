@@ -1,59 +1,64 @@
+import ResponsePaginated from "../entity/ResponsePaginated";
 import Response from "../entity/Response";
-import Produto from "../entity/Produto";
-import Categoria from "../entity/Categoria";
 import ProdutoDAO from "../dao/ProdutoDAO";
 import ProdutoBO from "../bo/ProdutoBO";
+import Produto from "../entity/Produto";
+import Categoria from "../entity/Categoria";
 
 export default class ProdutoService {
-   // private _produtoDAO: ProdutoDAO;
-   // private _produtoBO: ProdutoBO;
-   // constructor() {
-   //    this._produtoDAO = new ProdutoDAO();
-   //    this._produtoBO = new ProdutoBO();
-   // }
-   // public async getAllPaginated(pageNumber): Promise<Response> {
-   //    this._produtoBO.validId(pageNumber);
-   //    const res = await this._produtoDAO.getAllPaginated(pageNumber);
-   //    return new Response(200, this.createProduto(res));
-   // }
-   // public async add(produto): Promise<Response> {
-   //    this._produtoBO.validProduto(produto);
-   //    const res = await this._produtoDAO.add(produto);
-   //    return new Response(200, this.createProduto(res));
-   // }
-   // public async detail(id: number): Promise<Response> {
-   //    this._produtoBO.validId(id);
-   //    const res = await this._produtoDAO.detail(id);
-   //    return new Response(200, this.createProduto(res));
-   // }
-   // public async delete(id: number): Promise<Response> {
-   //    this._produtoBO.validId(id);
-   //    const res = await this._produtoDAO.delete(id);
-   //    return new Response(200, this.createProduto(res));
-   // }
-   // public async updateNome(id: number, nome: string): Promise<Response> {
-   //    this._produtoBO.validId(id);
-   //    this._produtoBO.validNome(nome);
-   //    const res = await this._produtoDAO.updateNome(id, nome);
-   //    return new Response(200, this.createProduto(res));
-   // }
-   // public async updatePreco(id: number, preco: number): Promise<Response> {
-   //    this._produtoBO.validId(id);
-   //    this._produtoBO.validPreco(preco);
-   //    const res = await this._produtoDAO.updatePreco(id, preco);
-   //    return new Response(200, this.createProduto(res));
-   // }
-   // public async updateCategoria(id: number, categoria: number): Promise<Response> {
-   //    this._produtoBO.validId(id);
-   //    this._produtoBO.validCategoria(categoria);
-   //    const res = await this._produtoDAO.updateCategoria(id, categoria);
-   //    return new Response(200, this.createProduto(res));
-   // }
-   // private createProduto(produto): Array<Produto> {
-   //    const produtos = new Array<Produto>();
-   //    if (produto && produto.length) {
-   //       produto.forEach(p => produtos.push(new Produto(p["nome"], p["preco"], new Categoria(p["nomeCategoria"], p["idCategoria"]), p["idProduto"])));
-   //    }
-   //    return produtos;
-   // }
+   private _produtoDAO: ProdutoDAO = new ProdutoDAO();
+   private _produtoBO: ProdutoBO = new ProdutoBO();
+
+   public async pesquisaPaginada(pageNumber): Promise<ResponsePaginated<Produto>> {
+      this._produtoBO.validPage(pageNumber);
+      const res = await this._produtoDAO.pesquisaPaginada(pageNumber);
+      return new ResponsePaginated<Produto>(200, res.total, res.page, this.createProduto(res));
+   }
+
+   public async salvar(produto): Promise<Response<Produto>> {
+      this._produtoBO.validProduto(produto);
+      const res = await this._produtoDAO.salvar(produto);
+      return new Response<Produto>(200, this.createProduto(res));
+   }
+
+   public async detalhe(id: number): Promise<Response<Produto>> {
+      this._produtoBO.validId(id);
+      const res = await this._produtoDAO.detalhe(id);
+      return new Response<Produto>(200, this.createProduto(res));
+   }
+
+   public async apagar(id: number): Promise<Response<Produto>> {
+      this._produtoBO.validId(id);
+      const res = await this._produtoDAO.apagar(id);
+      return new Response<Produto>(200, this.createProduto(res));
+   }
+
+   public async atualizarNome(id: number, nome: string): Promise<Response<Produto>> {
+      this._produtoBO.validId(id);
+      this._produtoBO.validNome(nome);
+      const res = await this._produtoDAO.atualizarNome(id, nome);
+      return new Response<Produto>(200, this.createProduto(res));
+   }
+
+   public async atualizarPreco(id: number, preco: number): Promise<Response<Produto>> {
+      this._produtoBO.validId(id);
+      this._produtoBO.validPreco(preco);
+      const res = await this._produtoDAO.atualizarPreco(id, preco);
+      return new Response<Produto>(200, this.createProduto(res));
+   }
+
+   public async atualizarCategoria(id: number, categoria: Categoria): Promise<Response<Produto>> {
+      this._produtoBO.validId(id);
+      this._produtoBO.validCategoria(categoria);
+      const res = await this._produtoDAO.atualizarCategoria(id, categoria);
+      return new Response<Produto>(200, this.createProduto(res));
+   }
+
+   private createProduto(produto): Array<Produto> {
+      const produtos = new Array<Produto>();
+      if (produto && produto.data.length) {
+         produto.data.forEach(p => produtos.push(new Produto(p["nome"], p["preco_unitario"], new Categoria(p["nome"], p["_id"]), p["_id"])));
+      }
+      return produtos;
+   }
 }

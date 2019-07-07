@@ -9,5 +9,4 @@ const ProdutoSchema = new Schema(
    },
    { collection: "produtos" }
 );
-
 export default mongoose.model("Produto", ProdutoSchema);

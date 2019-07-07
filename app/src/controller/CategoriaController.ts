@@ -1,9 +1,9 @@
 import * as Koa from "koa";
 import * as Router from "koa-router";
+import ResponsePaginated from "../entity/ResponsePaginated";
+import Response from "../entity/Response";
 import CategoriaService from "../service/CategoriaService";
 import Categoria from "../entity/Categoria";
-import Response from "../entity/Response";
-import ResponsePaginated from "../entity/ResponsePaginated";
 
 const categoriaService = new CategoriaService();
 

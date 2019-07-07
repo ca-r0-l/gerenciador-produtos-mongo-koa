@@ -1,20 +1,14 @@
+import BOSupport from "./BOSupport";
 import ClienteBO from "./ClienteBO";
 import Cliente from "../entity/Cliente";
-import Produto from "../entity/Produto";
 import Pedido from "../entity/Pedido";
+import Produto from "../entity/Produto";
 
-export default class PedidoBO {
-   public static readonly ID_INVALIDO: string = "Id inválido";
+export default class PedidoBO extends BOSupport {
    public static readonly VALOR_INVALIDO: string = "Valor inválido";
    public static readonly PRODUTOS_INVALIDOS: string = "Pedidos inválidos. Necessário pelo menos 1.";
 
    private _clienteBO: ClienteBO = new ClienteBO();
-
-   validId(id: any): void {
-      if (!id || (id && id <= 0)) {
-         throw new Error(PedidoBO.ID_INVALIDO);
-      }
-   }
 
    validCliente(cliente: number | Cliente): void {
       if (cliente) {

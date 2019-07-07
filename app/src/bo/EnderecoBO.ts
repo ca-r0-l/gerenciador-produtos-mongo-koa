@@ -1,19 +1,13 @@
+import BOSupport from "./BOSupport";
 import Endereco from "../entity/Endereco";
 
-export default class EnderecoBO {
-   public static readonly ID_INVALIDO: string = "Id inválido";
+export default class EnderecoBO extends BOSupport {
    public static readonly RUA_INVALIDA: string = "Rua inválida";
    public static readonly NUMERO_INVALIDO: string = "Número inválido";
    public static readonly BAIRRO_INVALIDO: string = "Bairro inválido";
    public static readonly CIDADE_INVALIDA: string = "Cidade inválida";
    public static readonly ESTADO_INVALIDO: string = "Estado inválido";
    public static readonly ENDERECO_INVALIDO: string = "Endereço inválido";
-
-   validId(id: any): void {
-      if (!id || (id && id <= 0)) {
-         throw new Error(EnderecoBO.ID_INVALIDO);
-      }
-   }
 
    validRua(rua: string): void {
       if (!rua || (rua && rua.trim().length === 0)) {
