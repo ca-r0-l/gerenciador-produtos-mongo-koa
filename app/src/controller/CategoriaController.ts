@@ -28,8 +28,8 @@ categoriaController
    .post("/", async (ctx: any) => {
       const categoria = ctx.request.body;
       const result = await categoriaService.salvar(categoria);
-      ctx.body = result.data;
-      ctx.status = result.code;
+      ctx.body = result ? result.data : null;
+      ctx.status = result ? result.code : null;
    })
    .put("/:id/nome", async (ctx: any) => {
       const id = ctx.params.id;

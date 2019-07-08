@@ -3,14 +3,14 @@ export default class BOSupport {
    public static readonly ID_INVALIDO: string = "Id inválido";
    public static readonly NOME_INVALIDO: string = "Nome inválido";
 
-   validPage(id: any): void {
+   validPage(id?: any): void {
       if (!id || (id && id <= 0) || isNaN(id)) {
          throw new Error(BOSupport.PAGINA_INVALIDA);
       }
    }
 
    validId(id?: any): void {
-      if (!id || (id && id <= 0) || isNaN(id)) {
+      if (!id || id === null || id === undefined) {
          throw new Error(BOSupport.ID_INVALIDO);
       }
    }

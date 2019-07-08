@@ -27,7 +27,7 @@ clienteController
    })
    .post("/", async (ctx: any) => {
       const cliente = ctx.request.body;
-      const result: Response<Cliente> = await clienteService.salvar(cliente);
+      const result = await clienteService.salvar(cliente);
       ctx.body = result.data;
       ctx.status = result.code;
    })

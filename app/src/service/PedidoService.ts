@@ -1,3 +1,4 @@
+import * as mongoose from "mongoose";
 import ResponsePaginated from "../entity/ResponsePaginated";
 import Response from "../entity/Response";
 import PedidoDAO from "../dao/PedidoDAO";
@@ -6,10 +7,14 @@ import Cliente from "../entity/Cliente";
 import Endereco from "../entity/Endereco";
 import PedidoBO from "../bo/PedidoBO";
 import Produto from "../entity/Produto";
+import EnderecoService from "./EnderecoService";
+import ClienteService from "./ClienteService";
 
 export default class PedidoService {
    private _pedidoDAO: PedidoDAO = new PedidoDAO();
    private _pedidoBO: PedidoBO = new PedidoBO();
+   private _enderecoService: EnderecoService = new EnderecoService();
+   private _clienteService: ClienteService = new ClienteService();
 
    public async pesquisaPaginada(pageNumber): Promise<ResponsePaginated<Pedido>> {
       this._pedidoBO.validPage(pageNumber);
@@ -17,15 +22,28 @@ export default class PedidoService {
       return new ResponsePaginated(200, res.total, res.page, this.createPedido(res));
    }
 
-   public async salvar(pedido: Pedido): Promise<Response<Pedido>> {
+   public async salvar(pedido): Promise<Response<Pedido> | void> {
       this._pedidoBO.validPedido(pedido);
-      const result = await this._pedidoDAO.salvar(pedido);
-      return new Response<Pedido>(200, this.createPedido(result));
+      const existe = await this._pedidoBO.validExisteNoBanco(pedido.id);
+      if (!existe) {
+         const session = await mongoose.startSession();
+         await session.startTransaction();
+         try {
+            await this._clienteService.salvar(pedido.cliente);
+            await this._enderecoService.salvar(pedido.cliente.endereco);
+            const result = await this._pedidoDAO.salvar(pedido);
+            return new Response<Pedido>(200, this.createPedido(result));
+         } catch (err) {
+            await session.abortTransaction();
+            await session.endSession();
+            throw err;
+         }
+      }
    }
 
-   public async detalhar(id: number): Promise<Response<Pedido>> {
+   public async detalhe(id: number): Promise<Response<Pedido>> {
       this._pedidoBO.validId(id);
-      const result = await this._pedidoDAO.detalhar(id);
+      const result = await this._pedidoDAO.detalhe(id);
       return new Response<Pedido>(200, this.createPedido(result));
    }
 

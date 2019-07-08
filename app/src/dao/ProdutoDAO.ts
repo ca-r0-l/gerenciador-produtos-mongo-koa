@@ -3,7 +3,7 @@ import Produto from "../entity/Produto";
 import ProdutoSchema from "../schema/ProdutoSchema";
 import Categoria from "../entity/Categoria";
 
-export default class ClienteDAO {
+export default class ProdutoDAO {
    public async pesquisaPaginada(page: number): Promise<any> {
       const query = {};
       const skip = databaseConstants.LIMIT * (page - 1);
@@ -47,7 +47,7 @@ export default class ClienteDAO {
    }
 
    public async atualizarPreco(id: number, preco: number): Promise<any> {
-      await ProdutoSchema.updateOne({ _id: id }, { preco }).exec();
+      await ProdutoSchema.updateOne({ _id: id }, { preco_unitario: preco }).exec();
    }
 
    public async atualizarCategoria(id: number, categoria: Categoria): Promise<any> {

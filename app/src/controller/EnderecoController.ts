@@ -27,9 +27,9 @@ enderecoController
    })
    .post("/", async (ctx: any) => {
       const endereco = ctx.request.body;
-      const result: Response<Endereco> = await enderecoService.salvar(endereco);
-      ctx.body = result.data;
-      ctx.status = result.code;
+      const result = await enderecoService.salvar(endereco);
+      ctx.body = result ? result.data : null;
+      ctx.status = result ? result.code : null;
    })
    .delete("/:id", async (ctx: Koa.Context) => {
       const id: number = ctx.params.id;

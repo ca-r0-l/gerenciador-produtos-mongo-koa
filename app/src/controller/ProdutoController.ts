@@ -28,9 +28,9 @@ produtoController
    })
    .post("/", async (ctx: any) => {
       const produto = ctx.request.body;
-      const result: Response<Produto> = await produtoService.salvar(produto);
-      ctx.body = result.data;
-      ctx.status = result.code;
+      const result = await produtoService.salvar(produto);
+      ctx.body = result ? result.data : null;
+      ctx.status = result ? result.code : null;
    })
    .delete("/:id", async (ctx: Koa.Context) => {
       const id: number = ctx.params.id;

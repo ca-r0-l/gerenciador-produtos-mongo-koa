@@ -18,14 +18,12 @@ export default class ClienteService {
       return new ResponsePaginated(200, res.total, res.page, this.createCliente(res.data));
    }
 
-   public async salvar(cliente: Cliente): Promise<Response<Cliente>> {
+   public async salvar(cliente): Promise<Response<Cliente>> {
       this._clienteBO.validCliente(cliente);
       const session = await mongoose.startSession();
       await session.startTransaction();
       try {
-         const existe = await this._clienteBO.validExisteNoBanco(cliente.endereco.id);
-
-         if (!existe) await this._enderecoService.salvar(cliente.endereco);
+         await this._enderecoService.salvar(cliente.endereco);
          const res = await this._clienteDAO.salvar(cliente);
          return new Response(200, this.createCliente(res));
       } catch (err) {

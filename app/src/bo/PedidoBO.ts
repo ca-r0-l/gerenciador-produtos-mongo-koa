@@ -3,12 +3,14 @@ import ClienteBO from "./ClienteBO";
 import Cliente from "../entity/Cliente";
 import Pedido from "../entity/Pedido";
 import Produto from "../entity/Produto";
+import PedidoDAO from "../dao/PedidoDAO";
 
 export default class PedidoBO extends BOSupport {
    public static readonly VALOR_INVALIDO: string = "Valor inválido";
    public static readonly PRODUTOS_INVALIDOS: string = "Pedidos inválidos. Necessário pelo menos 1.";
 
    private _clienteBO: ClienteBO = new ClienteBO();
+   private _pedidoDAO: PedidoDAO = new PedidoDAO();
 
    validCliente(cliente: number | Cliente): void {
       if (cliente) {
@@ -32,6 +34,15 @@ export default class PedidoBO extends BOSupport {
       if (!produtos || (produtos && produtos.length === 0)) {
          throw new Error(PedidoBO.PRODUTOS_INVALIDOS);
       }
+   }
+
+   async validExisteNoBanco(id?: number): Promise<boolean> {
+      let produto: boolean = false;
+      if (id) {
+         produto = await this._pedidoDAO.detalhe(id);
+      }
+
+      return produto ? true : false;
    }
 
    validPedido(pedido: Pedido): void {

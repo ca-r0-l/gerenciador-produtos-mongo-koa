@@ -1,5 +1,6 @@
 import BOSupport from "./BOSupport";
 import Endereco from "../entity/Endereco";
+import EnderecoDAO from "../dao/EnderecoDAO";
 
 export default class EnderecoBO extends BOSupport {
    public static readonly RUA_INVALIDA: string = "Rua inválida";
@@ -8,6 +9,8 @@ export default class EnderecoBO extends BOSupport {
    public static readonly CIDADE_INVALIDA: string = "Cidade inválida";
    public static readonly ESTADO_INVALIDO: string = "Estado inválido";
    public static readonly ENDERECO_INVALIDO: string = "Endereço inválido";
+
+   private _enderecoDAO = new EnderecoDAO();
 
    validRua(rua: string): void {
       if (!rua || (rua && rua.trim().length === 0)) {
@@ -37,6 +40,15 @@ export default class EnderecoBO extends BOSupport {
       if (!estado || (estado && estado.trim().length !== 2)) {
          throw new Error(EnderecoBO.ESTADO_INVALIDO);
       }
+   }
+
+   async validExisteNoBanco(id?: number): Promise<boolean> {
+      let endereco: boolean = false;
+      if (id) {
+         endereco = await this._enderecoDAO.detalhar(id);
+      }
+
+      return endereco ? true : false;
    }
 
    validEndereco(endereco: Endereco): void {

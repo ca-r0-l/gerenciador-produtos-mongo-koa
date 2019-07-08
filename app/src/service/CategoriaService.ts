@@ -1,3 +1,4 @@
+import * as mongoose from "mongoose";
 import Response from "../entity/Response";
 import ResponsePaginated from "../entity/ResponsePaginated";
 import CategoriaDAO from "../dao/CategoriaDAO";
@@ -14,10 +15,21 @@ export default class CategoriaService {
       return new ResponsePaginated(200, res.total, res.page, this.createCategoria(res.data));
    }
 
-   public async salvar(categoria): Promise<Response<Categoria>> {
+   public async salvar(categoria): Promise<Response<Categoria> | void> {
       this._categoriaBO.validCategoria(categoria);
-      const res = await this._categoriaDAO.salvar(categoria);
-      return new Response(200, this.createCategoria(res.data));
+      const existe = await this._categoriaBO.validExisteNoBanco(categoria.id);
+      if (!existe) {
+         const session = await mongoose.startSession();
+         await session.startTransaction();
+         try {
+            const res = await this._categoriaDAO.salvar(categoria);
+            return new Response(200, this.createCategoria(res.data));
+         } catch (err) {
+            await session.abortTransaction();
+            await session.endSession();
+            throw err;
+         }
+      }
    }
 
    public async detalhar(id: number): Promise<Response<Categoria>> {

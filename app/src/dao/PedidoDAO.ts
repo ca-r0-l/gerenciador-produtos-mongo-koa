@@ -43,7 +43,7 @@ export default class PedidoDAO {
       return data;
    }
 
-   public async detalhar(id: number): Promise<any> {
+   public async detalhe(id: number): Promise<any> {
       const data = await PedidoSchema.findById(id).exec();
       return [data];
    }

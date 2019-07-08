@@ -1,12 +1,15 @@
+import * as mongoose from "mongoose";
 import ResponsePaginated from "../entity/ResponsePaginated";
 import Response from "../entity/Response";
 import ProdutoDAO from "../dao/ProdutoDAO";
 import ProdutoBO from "../bo/ProdutoBO";
 import Produto from "../entity/Produto";
 import Categoria from "../entity/Categoria";
+import CategoriaService from "./CategoriaService";
 
 export default class ProdutoService {
    private _produtoDAO: ProdutoDAO = new ProdutoDAO();
+   private _categoriaService: CategoriaService = new CategoriaService();
    private _produtoBO: ProdutoBO = new ProdutoBO();
 
    public async pesquisaPaginada(pageNumber): Promise<ResponsePaginated<Produto>> {
@@ -15,10 +18,22 @@ export default class ProdutoService {
       return new ResponsePaginated<Produto>(200, res.total, res.page, this.createProduto(res));
    }
 
-   public async salvar(produto): Promise<Response<Produto>> {
+   public async salvar(produto): Promise<Response<Produto> | void> {
       this._produtoBO.validProduto(produto);
-      const res = await this._produtoDAO.salvar(produto);
-      return new Response<Produto>(200, this.createProduto(res));
+      const existe = await this._produtoBO.validExisteNoBanco(produto.id);
+      if (!existe) {
+         const session = await mongoose.startSession();
+         await session.startTransaction();
+         try {
+            await this._categoriaService.salvar(produto.categoria);
+            const res = await this._produtoDAO.salvar(produto);
+            return new Response<Produto>(200, this.createProduto(res));
+         } catch (err) {
+            await session.abortTransaction();
+            await session.endSession();
+            throw err;
+         }
+      }
    }
 
    public async detalhe(id: number): Promise<Response<Produto>> {
@@ -56,8 +71,14 @@ export default class ProdutoService {
 
    private createProduto(produto): Array<Produto> {
       const produtos = new Array<Produto>();
-      if (produto && produto.data.length) {
-         produto.data.forEach(p => produtos.push(new Produto(p["nome"], p["preco_unitario"], new Categoria(p["nome"], p["_id"]), p["_id"])));
+      if (produto && produto.data && produto.data.length) {
+         produto.data.forEach(p =>
+            produtos.push(new Produto(p["nome"], p["preco_unitario"], new Categoria(p["categoria"]["nome"], p["categoria"]["_id"]), p["_id"]))
+         );
+      } else if (produto && produto.length) {
+         produto.forEach(p =>
+            produtos.push(new Produto(p["nome"], p["preco_unitario"], new Categoria(p["categoria"]["nome"], p["categoria"]["_id"]), p["_id"]))
+         );
       }
       return produtos;
    }

@@ -1,5 +1,5 @@
 import BOSupport from "./BOSupport";
-import EnderecoDAO from "../dao/EnderecoDAO";
+import ClienteDAO from "../dao/EnderecoDAO";
 import EnderecoBO from "./EnderecoBO";
 import Endereco from "../entity/Endereco";
 
@@ -8,7 +8,7 @@ export default class ClienteBO extends BOSupport {
    public static readonly CLIENTE_INVALIDO: string = "Cliente inválido";
 
    private _enderecoBO: EnderecoBO = new EnderecoBO();
-   private _enderecoDAO: EnderecoDAO = new EnderecoDAO();
+   private _clienteDAO: ClienteDAO = new ClienteDAO();
 
    validCelular(celular?: string): void {
       if (!celular || (celular && celular.trim().length !== 9) || (celular && !Number.parseInt(celular))) {
@@ -33,7 +33,7 @@ export default class ClienteBO extends BOSupport {
    async validExisteNoBanco(id?: number): Promise<boolean> {
       let endereco: boolean = false;
       if (id) {
-         endereco = await this._enderecoDAO.detalhar(id);
+         endereco = await this._clienteDAO.detalhar(id);
       }
 
       return endereco ? true : false;

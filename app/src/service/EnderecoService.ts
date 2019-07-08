@@ -3,6 +3,7 @@ import Endereco from "../entity/Endereco";
 import EnderecoDAO from "../dao/EnderecoDAO";
 import EnderecoBO from "../bo/EnderecoBO";
 import ResponsePaginated from "../entity/ResponsePaginated";
+import * as mongoose from "mongoose";
 
 export default class EnderecoService {
    private _enderecoDAO: EnderecoDAO = new EnderecoDAO();
@@ -14,10 +15,21 @@ export default class EnderecoService {
       return new ResponsePaginated(200, res.total, res.page, this.createEndereco(res.data));
    }
 
-   public async salvar(endereco): Promise<Response<Endereco>> {
+   public async salvar(endereco): Promise<Response<Endereco> | void> {
       this._enderecoBO.validEndereco(endereco);
-      const res = await this._enderecoDAO.salvar(endereco);
-      return new Response(200, this.createEndereco(res));
+      const existe = await this._enderecoBO.validExisteNoBanco(endereco.id);
+      if (!existe) {
+         const session = await mongoose.startSession();
+         await session.startTransaction();
+         try {
+            const res = await this._enderecoDAO.salvar(endereco);
+            return new Response(200, this.createEndereco(res));
+         } catch (err) {
+            await session.abortTransaction();
+            await session.endSession();
+            throw err;
+         }
+      }
    }
 
    public async detalhar(id: number): Promise<Response<Endereco>> {

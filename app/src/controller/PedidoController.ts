@@ -21,15 +21,15 @@ pedidoController
    })
    .get("/:id", async (ctx: Koa.Context) => {
       const id: number = ctx.params.id;
-      const result: Response<Pedido> = await pedidoService.detalhar(id);
+      const result: Response<Pedido> = await pedidoService.detalhe(id);
       ctx.body = result.data;
       ctx.status = result.code;
    })
    .post("/", async (ctx: any) => {
       const pedido = ctx.request.body;
-      const result: Response<Pedido> = await pedidoService.salvar(pedido);
-      ctx.body = result.data;
-      ctx.status = result.code;
+      const result = await pedidoService.salvar(pedido);
+      ctx.body = result ? result.data : null;
+      ctx.status = result ? result.code : null;
    })
    .delete("/:id", async (ctx: Koa.Context) => {
       const id: number = ctx.params.id;
