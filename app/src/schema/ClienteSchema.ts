@@ -6,6 +6,7 @@ const ClienteSchema = new Schema(
       nome: String,
       celular: String,
       endereco: {
+         id: String,
          rua: String,
          numero: Number,
          bairro: String,

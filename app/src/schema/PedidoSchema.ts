@@ -5,6 +5,7 @@ const PedidoSchema = new Schema(
    {
       valor: Number,
       cliente: {
+         id: String,
          nome: String,
          celular: String,
          endereco: {
@@ -15,7 +16,7 @@ const PedidoSchema = new Schema(
             estado: String
          }
       },
-      produtos: [{ nome: String, preco_unitario: Number, categoria: { nome: String } }]
+      produtos: [{ id: String, nome: String, preco_unitario: Number, categoria: { id: String, nome: String } }]
    },
    { collection: "pedidos" }
 );

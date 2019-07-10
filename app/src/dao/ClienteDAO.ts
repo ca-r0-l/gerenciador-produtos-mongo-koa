@@ -4,7 +4,6 @@ import ClienteSchema from "../schema/ClienteSchema";
 import Endereco from "../entity/Endereco";
 
 export default class ClienteDAO {
-
    public async pesquisaPaginada(page: number): Promise<any> {
       const query = {};
       const skip = databaseConstants.LIMIT * (page - 1);
@@ -51,10 +50,19 @@ export default class ClienteDAO {
       await ClienteSchema.updateOne({ _id: id }, { nome: nome }).exec();
    }
 
-   public async atualizarEndereco(id: number, endereco: Endereco): Promise<void> {
-      await ClienteSchema.updateOne(
-         { _id: id },
-         { endereco: { rua: endereco.rua, numero: endereco.numero, bairro: endereco.bairro, cidade: endereco.cidade, estado: endereco.estado } }
+   public async atualizarEndereco(endereco: Endereco): Promise<void> {
+      await ClienteSchema.updateMany(
+         { "endereco.id": endereco.id },
+         {
+            endereco: {
+               rua: endereco.rua,
+               numero: endereco.numero,
+               bairro: endereco.bairro,
+               cidade: endereco.cidade,
+               estado: endereco.estado,
+               id: endereco.id
+            }
+         }
       ).exec();
    }
 

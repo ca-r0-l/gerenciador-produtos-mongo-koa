@@ -17,18 +17,21 @@ export default class EnderecoService {
 
    public async salvar(endereco): Promise<Response<Endereco> | void> {
       this._enderecoBO.validEndereco(endereco);
-      const existe = await this._enderecoBO.validExisteNoBanco(endereco.id);
-      if (!existe) {
-         const session = await mongoose.startSession();
-         await session.startTransaction();
-         try {
-            const res = await this._enderecoDAO.salvar(endereco);
-            return new Response(200, this.createEndereco(res));
-         } catch (err) {
-            await session.abortTransaction();
-            await session.endSession();
-            throw err;
+      const session = await mongoose.startSession();
+      await session.startTransaction();
+      let res;
+      try {
+         const existe = await this._enderecoBO.validExisteNoBanco(endereco.id);
+         if (!existe) {
+            res = await this._enderecoDAO.salvar(endereco);
+         } else {
+            res = await this._enderecoDAO.atualizar(endereco);
          }
+         return new Response(200, this.createEndereco(res));
+      } catch (err) {
+         await session.abortTransaction();
+         await session.endSession();
+         throw err;
       }
    }
 
@@ -81,15 +84,20 @@ export default class EnderecoService {
 
    public async atualizar(endereco: Endereco): Promise<Response<Endereco>> {
       this._enderecoBO.validEndereco(endereco);
-      await this._enderecoDAO.atualizar(endereco);
-      return new Response(200);
+      const res = await this._enderecoDAO.atualizar(endereco);
+      return new Response(200, this.createEndereco(res));
    }
 
    private createEndereco(endereco): Array<Endereco> {
       const enderecos = new Array<Endereco>();
       if (endereco && endereco.length) {
          endereco.forEach(e => enderecos.push(new Endereco(e["rua"], e["numero"], e["bairro"], e["cidade"], e["estado"], e["id"])));
+      } else if (endereco) {
+         enderecos.push(
+            new Endereco(endereco["rua"], endereco["numero"], endereco["bairro"], endereco["cidade"], endereco["estado"], endereco["id"])
+         );
       }
+
       return enderecos;
    }
 }

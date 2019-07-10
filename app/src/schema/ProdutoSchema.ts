@@ -5,7 +5,7 @@ const ProdutoSchema = new Schema(
    {
       nome: { type: String, required: true, unique: true },
       preco_unitario: Number,
-      categoria: { nome: String }
+      categoria: { id: String, nome: String }
    },
    { collection: "produtos" }
 );

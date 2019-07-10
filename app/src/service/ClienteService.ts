@@ -55,8 +55,8 @@ export default class ClienteService {
    public async atualizarEndereco(id: number, endereco: Endereco): Promise<Response<Cliente>> {
       this._clienteBO.validId(id);
       this._clienteBO.validEndereco(endereco);
-      await this._enderecoService.atualizar(endereco);
-      await this._clienteDAO.atualizarEndereco(id, endereco);
+      await this._enderecoService.salvar(endereco);
+      await this._clienteDAO.atualizarEndereco(endereco);
       return new Response(200);
    }
 
@@ -80,7 +80,7 @@ export default class ClienteService {
                      c["endereco"]["bairro"],
                      c["endereco"]["cidade"],
                      c["endereco"]["estado"],
-                     c["endereco"]["_id"]
+                     c["endereco"]["id"]
                   ),
                   c["celular"],
                   c["_id"]
