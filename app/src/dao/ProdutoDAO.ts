@@ -26,31 +26,31 @@ export default class ProdutoDAO {
       const _pedido: any = new ProdutoSchema({
          nome: produto.nome,
          preco_unitario: produto.preco_unitario,
-         categoria: { nome: produto.categoria.nome }
+         categoria: { nome: produto.categoria.nome, id: produto.categoria.id }
       });
 
       const data = await _pedido.save();
       return data;
    }
 
-   public async detalhe(id: number): Promise<any> {
+   public async detalhe(id: string): Promise<any> {
       const data = await ProdutoSchema.findById(id).exec();
       return [data];
    }
 
-   public async apagar(id: number): Promise<void> {
+   public async apagar(id: string): Promise<void> {
       await ProdutoSchema.findByIdAndDelete(id).exec();
    }
 
-   public async atualizarNome(id: number, nome: string): Promise<any> {
+   public async atualizarNome(id: string, nome: string): Promise<any> {
       await ProdutoSchema.updateOne({ _id: id }, { nome }).exec();
    }
 
-   public async atualizarPreco(id: number, preco: number): Promise<any> {
+   public async atualizarPreco(id: string, preco: number): Promise<any> {
       await ProdutoSchema.updateOne({ _id: id }, { preco_unitario: preco }).exec();
    }
 
-   public async atualizarCategoria(id: number, categoria: Categoria): Promise<any> {
-      await ProdutoSchema.updateOne({ _id: id }, { categoria: { nome: categoria.nome } }).exec();
+   public async atualizarCategoria(categoria: Categoria): Promise<any> {
+      await ProdutoSchema.updateMany({ "categoria.id": categoria.id }, { categoria: { nome: categoria.nome, id: categoria.id } }).exec();
    }
 }

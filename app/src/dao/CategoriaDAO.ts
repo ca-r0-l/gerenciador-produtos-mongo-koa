@@ -29,16 +29,16 @@ export default class CategoriaDAO {
       return data;
    }
 
-   public async detalhar(id: number): Promise<any> {
+   public async detalhar(id: string): Promise<any> {
       const data = await CategoriaSchema.findById(id).exec();
       return [data];
    }
 
-   public async atualizarNome(id: number, nome: string): Promise<void> {
+   public async atualizarNome(id: string, nome: string): Promise<void> {
       await CategoriaSchema.updateOne({ _id: id }, { nome: nome }).exec();
    }
 
-   public async apagar(id: number): Promise<void> {
+   public async apagar(id: string): Promise<void> {
       await CategoriaSchema.findByIdAndDelete(id).exec();
    }
 }

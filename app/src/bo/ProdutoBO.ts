@@ -31,13 +31,23 @@ export default class ProdutoBO extends BOSupport {
       }
    }
 
-   async validExisteNoBanco(id?: number): Promise<boolean> {
+   async validExisteNoBanco(id?: string): Promise<boolean> {
       let produto: boolean = false;
       if (id) {
          produto = await this._produtoDAO.detalhe(id);
       }
 
       return produto ? true : false;
+   }
+
+   addCategoria(produto, categoria): any {
+      if (produto && categoria) {
+         if (categoria.data && categoria.data.length > 0) {
+            produto.categoria.nome = categoria.data[0].nome;
+            produto.categoria.id = categoria.data[0].id;
+         }
+      }
+      return produto;
    }
 
    validProduto(produto: Produto): void {

@@ -21,7 +21,7 @@ produtoController
       ctx.status = result.code;
    })
    .get("/:id", async (ctx: Koa.Context) => {
-      const id: number = ctx.params.id;
+      const id = ctx.params.id;
       const result: Response<Produto> = await produtoService.detalhe(id);
       ctx.body = result.data;
       ctx.status = result.code;
@@ -33,27 +33,27 @@ produtoController
       ctx.status = result ? result.code : null;
    })
    .delete("/:id", async (ctx: Koa.Context) => {
-      const id: number = ctx.params.id;
+      const id = ctx.params.id;
       const result: Response<Produto> = await produtoService.apagar(id);
       ctx.body = result.data;
       ctx.status = result.code;
    })
    .put("/:id/nome", async (ctx: any) => {
-      const id: number = ctx.params.id;
+      const id = ctx.params.id;
       const nome: string = ctx.request.body.nome;
       const result: Response<Produto> = await produtoService.atualizarNome(id, nome);
       ctx.body = result.data;
       ctx.status = result.code;
    })
    .put("/:id/preco", async (ctx: any) => {
-      const id: number = ctx.params.id;
+      const id = ctx.params.id;
       const preco: number = ctx.request.body.preco;
       const result: Response<Produto> = await produtoService.atualizarPreco(id, preco);
       ctx.body = result.data;
       ctx.status = result.code;
    })
    .put("/:id/categoria", async (ctx: any) => {
-      const id: number = ctx.params.id;
+      const id = ctx.params.id;
       const categoria = ctx.request.body.categoria;
       const result: Response<Produto> = await produtoService.atualizarCategoria(id, categoria);
       ctx.body = result.data;

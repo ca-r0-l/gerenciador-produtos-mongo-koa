@@ -18,44 +18,54 @@ export default class CategoriaService {
    public async salvar(categoria): Promise<Response<Categoria> | void> {
       this._categoriaBO.validCategoria(categoria);
       const existe = await this._categoriaBO.validExisteNoBanco(categoria.id);
-      if (!existe) {
-         const session = await mongoose.startSession();
+      const session = await mongoose.startSession();
+      let res;
+      try {
          await session.startTransaction();
-         try {
-            const res = await this._categoriaDAO.salvar(categoria);
-            return new Response(200, this.createCategoria(res.data));
-         } catch (err) {
-            await session.abortTransaction();
-            await session.endSession();
-            throw err;
+         if (!existe) {
+            res = await this._categoriaDAO.salvar(categoria);
+         } else {
+            res = await this._categoriaDAO.atualizarNome(categoria.id, categoria.nome);
          }
+         return new Response(200, this.createCategoria(res));
+      } catch (err) {
+         await session.abortTransaction();
+         await session.endSession();
+         throw err;
       }
    }
 
-   public async detalhar(id: number): Promise<Response<Categoria>> {
+   public async detalhar(id: string): Promise<Response<Categoria>> {
       this._categoriaBO.validId(id);
       const res = await this._categoriaDAO.detalhar(id);
       return new Response(200, this.createCategoria(res));
    }
 
-   public async atualizarNome(id: number, nome: string): Promise<Response<Categoria>> {
+   public async atualizarNome(id: string, nome: string): Promise<Response<Categoria>> {
       this._categoriaBO.validId(id);
       this._categoriaBO.validNome(nome);
       await this._categoriaDAO.atualizarNome(id, nome);
       return new Response(200);
    }
 
-   public async apagar(id: number): Promise<Response<Categoria>> {
+   public async atualizar(id: string, nome: string): Promise<Response<Categoria>> {
+      await this._categoriaDAO.atualizarNome(id, nome);
+      return new Response(200);
+   }
+
+   public async apagar(id: string): Promise<Response<Categoria>> {
       this._categoriaBO.validId(id);
       await this._categoriaDAO.apagar(id);
       return new Response(200);
    }
 
-   private createCategoria(categoria): Array<Categoria> {
-      const categorias: Array<Categoria> = new Array<Categoria>();
-      if (categoria && categoria.length) {
-         categoria.forEach(c => categorias.push(new Categoria(c["nome"], c["_id"])));
+   private createCategoria(categorias): Array<Categoria> {
+      const _categorias: Array<Categoria> = new Array<Categoria>();
+      if (categorias && categorias.data && categorias.data.length) {
+         categorias.data.forEach(c => _categorias.push(new Categoria(c.data["nome"], c.data["_id"])));
+      } else if (categorias) {
+         categorias.forEach(c => _categorias.push(new Categoria(c["nome"], c["_id"])));
       }
-      return categorias;
+      return _categorias;
    }
 }
